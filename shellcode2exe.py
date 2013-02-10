@@ -172,7 +172,7 @@ def main(argv):
 
     # Now's a good time to show an error if InlineEgg is missing
     if exelib is None:
-        parser.error("missing module: InlineEgg (http://oss.coresecurity.com/projects/inlineegg.html)")
+        parser.error("missing module:\n    InlineEgg (http://oss.coresecurity.com/projects/inlineegg.html)")
 
     # Validate the command line arguments
     if len(parameters) < 1:
@@ -191,20 +191,22 @@ def main(argv):
         if parameters[1] == parameters[0]:
             parameters[1] = '%s_executable%s' % path.splitext(parameters[0])
 
-    # Convert the shellcode to an executable file
-    if options.asciicmd is True:
-        print "Treating first parameter as \\x encoded shellcode"
-        shellcode = parameters[0]
-        shellcode = shellcode.decode("string-escape")
-    elif options.asciifile is True:
-        shellcode  = open(parameters[0], 'rb').read()
-        print "Reading string shellcode from file %s" % parameters[0]
-        shellcode = shellcode.decode("string-escape")
-    else:
-        shellcode = open(parameters[0], 'rb').read()
-        print "Reading raw shellcode from file %s" % parameters[0]
-
     try:
+
+        # Get the shellcode
+        if options.asciicmd is True:
+            print "Treating first parameter as \\x encoded shellcode"
+            shellcode = parameters[0]
+            shellcode = shellcode.decode("string-escape")
+        elif options.asciifile is True:
+            print "Reading string shellcode from file %s" % parameters[0]
+            shellcode = open(parameters[0], 'rb').read()
+            shellcode = shellcode.decode("string-escape")
+        else:
+            print "Reading raw shellcode from file %s" % parameters[0]
+            shellcode = open(parameters[0], 'rb').read()
+
+        # Convert the shellcode to an executable file
         print "Generating executable file"
         executable = ShellcodeToExecutable(shellcode, options.os, options.arch)
         if len(parameters) < 2:
@@ -214,9 +216,8 @@ def main(argv):
         print "Writing file %s" % filename
         open(filename, 'w+b').write(executable.bytes())
         print "Done."
+
     except Exception, e:
-
-
 ##        raise   # XXX DEBUG
         parser.error(str(e))
 
