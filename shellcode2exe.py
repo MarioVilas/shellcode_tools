@@ -216,7 +216,8 @@ def main(argv):
         else:
             filename = parameters[1]
         print "Writing file %s" % filename
-        open(filename, 'w+b').write(executable.bytes())
+        bytes = executable.bytes()
+        open(filename, 'w+b').write(bytes)
         print "Done."
 
     except Exception, e:
