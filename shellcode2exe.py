@@ -1,8 +1,10 @@
-#!/usr/bin/env python
-
 # Shellcode to executable converter
-# Copyright (c) 2009, Mario Vilas
+# Copyright (c) 2009-2013, Mario Vilas
 # All rights reserved.
+#
+# Tweaked by Anand Sastry in 2/2010 and 12/2011 to allow the user to provide
+# shellcode as a \x encoded string on the command-line, if the user
+# doesn't wish to supply a file name that contains raw shellcode.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -149,13 +151,17 @@ def main(argv):
     print
 
     # Configure the command line parser
-    usage  = "\n\t%%prog payload.bin [payload.exe]\n\t\t[--arch=%s]\n\t\t[--os=%s]"
+    usage  = "\n\t%%prog payload.bin [payload.exe]\n\t\t[--arch=%s]\n\t\t[--os=%s]\n\t\t[-c Allow for ascii shellcode as a cmd line parameter]\n\t\t[-s Allows for ascii shellcode in file]"
     usage  = usage % ( '|'.join(ShellcodeToExecutable.arch_list), '|'.join(ShellcodeToExecutable.os_list) )
     parser = optparse.OptionParser(usage=usage)
     parser.add_option("-a", "--arch", metavar="ARCH",
                       help="target architecture [default: i386]")
     parser.add_option("-o", "--os", metavar="OS",
                       help="target operating system [default: windows]")
+    parser.add_option("-c", "--asciicmd", action="store_true", dest="asciicmd",
+                  help="enable ascii entry in input file")
+    parser.add_option("-s", "--asciifile", action="store_true", dest="asciifile",
+                      help="enable ascii entry in command line")
     parser.set_defaults(arch='i386', os='windows')
 
     # Parse the command line arguments
@@ -177,7 +183,7 @@ def main(argv):
         parser.error("unknown architecture: %s" % options.arch)
     if options.os not in ShellcodeToExecutable.os_list:
         parser.error("unknown operating system: %s" % options.os)
-    if len(parameters) < 2:
+    if len(parameters) < 2 and options.asciicmd is None:
         if options.os == 'windows':
             parameters.append('%s%s%s' % (path.splitext(parameters[0])[0], path.extsep, 'exe'))
         else:
@@ -186,15 +192,31 @@ def main(argv):
             parameters[1] = '%s_executable%s' % path.splitext(parameters[0])
 
     # Convert the shellcode to an executable file
-    try:
-        print "Reading file %s" % parameters[0]
+    if options.asciicmd is True:
+        print "Treating first parameter as \\x encoded shellcode"
+        shellcode = parameters[0]
+        shellcode = shellcode.decode("string-escape")
+    elif options.asciifile is True:
         shellcode  = open(parameters[0], 'rb').read()
+        print "Reading string shellcode from file %s" % parameters[0]
+        shellcode = shellcode.decode("string-escape")
+    else:
+        shellcode = open(parameters[0], 'rb').read()
+        print "Reading raw shellcode from file %s" % parameters[0]
+
+    try:
         print "Generating executable file"
         executable = ShellcodeToExecutable(shellcode, options.os, options.arch)
-        print "Writing file %s" % parameters[1]
-        open(parameters[1], 'w+b').write(executable.bytes())
+        if len(parameters) < 2:
+            filename = "payload.exe"
+        else:
+            filename = parameters[1]
+        print "Writing file %s" % filename
+        open(filename, 'w+b').write(executable.bytes())
         print "Done."
     except Exception, e:
+
+
 ##        raise   # XXX DEBUG
         parser.error(str(e))
 
