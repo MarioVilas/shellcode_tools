@@ -70,6 +70,8 @@ class ShellcodeToExecutable(object):
         return self.__program.bytes()
 
     def build_windows_i386(self, shellcode):
+        if len(shellcode) > 4096:
+            raise RuntimeError("Payloads over 4k for EXE files are not supported")
         self.__program = exelib.PEProgram()
         self.__program.addCode(shellcode)
 
