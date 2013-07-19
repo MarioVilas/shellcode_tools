@@ -1,0 +1,5 @@
+* tooltips
+* menu contextual para el rich edit
+* editor hexadecimal para el bytecode
+* busqueda de opcodes incompletos
+* mas chequeos de error
