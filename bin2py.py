@@ -123,7 +123,7 @@ def parseCommandLine():
             input += filelist
         i += 1
     
-    if decoderflag and not (gzipflag or zlibflag or base64flag): raise Exception, "inconsistent switch: -d"
+    if decoderflag and not (gzipflag or zlibflag or base64flag): decoderflag = False
     
     return input, output, appendflag, hexaflag, zlibflag, gzipflag, base64flag, decoderflag
 
