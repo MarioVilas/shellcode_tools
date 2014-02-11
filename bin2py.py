@@ -51,7 +51,7 @@ Usage:
 
 Where "input" is a glob-style filename list, and "switches" can be a combination of the following:
 
-    -a                  Append output instead of overwritting
+    -a                  Append output instead of overwriting
     -b                  Encode with base64
     -d                  Add python code to decode the string
     -g                  Compress with gzip
@@ -217,7 +217,7 @@ def main():
     
     if single_output:
         if appendflag:
-            ofile = open(output[0], 'w+')
+            ofile = open(output[0], 'a')
         else:
             ofile = open(output[0], 'w')
         if decoderflag:
@@ -261,7 +261,7 @@ def main():
             if decoderflag:
                 data = putDecoder(zlibflag, gzipflag, base64flag) + data
             if appendflag:
-                open(filename, 'w+').write(data)
+                open(filename, 'a').write(data)
             else:
                 open(filename, 'w').write(data)
             output.append(filename)
