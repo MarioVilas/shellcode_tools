@@ -1,5 +1,7 @@
+#!/usr/bin/env python
+
 # Shellcode to executable converter
-# Copyright (c) 2009-2013, Mario Vilas
+# Copyright (c) 2009-2015, Mario Vilas
 # All rights reserved.
 #
 # Tweaked by Anand Sastry in 2/2010 and 12/2011 to allow the user to provide
