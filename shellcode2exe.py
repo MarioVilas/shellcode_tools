@@ -79,69 +79,69 @@ class ShellcodeToExecutable(object):
 
     def build_linux_i386(self, shellcode):
         self.__program = exelib.Elf32Program()
-        self.__program.arch = self.__program.ARCH_I386
+        self.__program.setArch(self.__program.ARCH_I386)
         self.__program.addCode(shellcode)
 
     def build_linux_sparc(self, shellcode):
         self.__program = exelib.Elf32Program()
-        self.__program.arch = self.__program.ARCH_SPARC
+        self.__program.setArch(self.__program.ARCH_SPARC)
         self.__program.addCode(shellcode)
 
     def build_linux_powerpc(self, shellcode):
         self.__program = exelib.AOutProgram()
-        self.__program.arch = self.__program.MID_POWERPC
+        self.__program.setArch(self.__program.MID_POWERPC)
         self.__program.setCode(shellcode)
 
     def build_linux_arm(self, shellcode):
         self.__program = exelib.AOutProgram()
-        self.__program.arch = self.__program.MID_ARM6
+        self.__program.setArch(self.__program.MID_ARM6)
         self.__program.setCode(shellcode)
 
     def build_solaris_i386(self, shellcode):
         self.__program = exelib.Elf32Program()
-        self.__program.arch = self.__program.ARCH_I386
+        self.__program.setArch(self.__program.ARCH_I386)
         self.__program.addCode(shellcode)
 
     def build_solaris_sparc(self, shellcode):
         self.__program = exelib.Elf32Program()
-        self.__program.arch = self.__program.ARCH_SPARC
+        self.__program.setArch(self.__program.ARCH_SPARC)
         self.__program.addCode(shellcode)
 
     def build_freebsd_i386(self, shellcode):
         self.__program = exelib.Elf32Program()
-        self.__program.arch = self.__program.ARCH_I386
+        self.__program.setArch(self.__program.ARCH_I386)
         self.__program.header.ei_osabi = exelib.ELFOSABI_FREEBSD
         self.__program.addCode(shellcode)
 
     def build_freebsd_sparc(self, shellcode):
         self.__program = exelib.Elf32Program()
-        self.__program.arch = self.__program.ARCH_SPARC
+        self.__program.setArch(self.__program.ARCH_SPARC)
         self.__program.header.ei_osabi = exelib.ELFOSABI_FREEBSD
         self.__program.addCode(shellcode)
 
     def build_freebsd_arm(self, shellcode):
         self.__program = exelib.AOutProgram()
-        self.__program.arch = self.__program.MID_ARM6
+        self.__program.setArch(self.__program.MID_ARM6)
         self.__program.setCode(shellcode)
 
     def build_openbsd_i386(self, shellcode):
         self.__program = exelib.AOutProgram()
-        self.__program.arch = self.__program.ARCH_I386
+        self.__program.setArch(self.__program.ARCH_I386)
         self.__program.setCode(shellcode)
 
     def build_openbsd_sparc(self, shellcode):
         self.__program = exelib.AOutProgram()
-        self.__program.arch = self.__program.MID_SPARC
+        self.__program.setArch(self.__program.MID_SPARC)
         self.__program.setCode(shellcode)
 
     def build_openbsd_powerpc(self, shellcode):
         self.__program = exelib.AOutProgram()
-        self.__program.arch = self.__program.MID_POWERPC
+        self.__program.setArch(self.__program.MID_POWERPC)
         self.__program.setCode(shellcode)
 
     def build_openbsd_arm(self, shellcode):
         self.__program = exelib.AOutProgram()
-        self.__program.arch = self.__program.MID_ARM6
+        self.__program.setArch(self.__program.MID_ARM6)
         self.__program.setCode(shellcode)
 
 # Main function to run when invoked from the command line
