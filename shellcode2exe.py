@@ -39,6 +39,14 @@ try:
 except ImportError:
     exelib = None
 
+def unicodeToRaw(unicode_str):
+    import re
+    from binascii import a2b_hex
+
+    match_list = re.findall("[a-f\d]+", unicode_str, re.IGNORECASE|re.MULTILINE)
+    raw = ''.join(a2b_hex(match[2:]) + a2b_hex(match[:2]) for match in match_list if len(match) == 4)
+    return raw
+
 # Shellcode to executable converter
 class ShellcodeToExecutable(object):
 
@@ -155,7 +163,7 @@ def main(argv):
     print
 
     # Configure the command line parser
-    usage  = "\n\t%%prog payload.bin [payload.exe]\n\t\t[--arch=%s]\n\t\t[--os=%s]\n\t\t[-c Allow for ascii shellcode as a cmd line parameter]\n\t\t[-s Allows for ascii shellcode in file]"
+    usage  = "\n\t%%prog payload.bin [payload.exe]\n\t\t[--arch=%s]\n\t\t[--os=%s]\n\t\t[-c Allow for ascii shellcode as a cmd line parameter]\n\t\t[-s Allows for ascii shellcode in file]\n\t\t[-d Allows for unicode shellcode as a cmd line parameter]\n\t\t[-u Allows for unicode shellcode in file]"
     usage  = usage % ( '|'.join(ShellcodeToExecutable.arch_list), '|'.join(ShellcodeToExecutable.os_list) )
     parser = optparse.OptionParser(usage=usage)
     parser.add_option("-a", "--arch", metavar="ARCH",
@@ -163,9 +171,13 @@ def main(argv):
     parser.add_option("-o", "--os", metavar="OS",
                       help="target operating system [default: windows]")
     parser.add_option("-c", "--asciicmd", action="store_true", dest="asciicmd",
-                  help="enable ascii entry in input file")
+                      help="enable ascii entry in command line (e.g. -c '\x90\x90')")
     parser.add_option("-s", "--asciifile", action="store_true", dest="asciifile",
-                      help="enable ascii entry in command line")
+                      help="enable ascii entry in input file")
+    parser.add_option("-d", "--unicodecmd", action="store_true", dest="unicodecmd",
+                      help="enable unicode entry in command line (e.g. -d '%u9090')")
+    parser.add_option("-u", "--unicodefile", action="store_true", dest="unicodefile",
+                      help="enable unicode entry in input file")
     parser.set_defaults(arch='i386', os='windows')
 
     # Parse the command line arguments
@@ -187,7 +199,7 @@ def main(argv):
         parser.error("unknown architecture: %s" % options.arch)
     if options.os not in ShellcodeToExecutable.os_list:
         parser.error("unknown operating system: %s" % options.os)
-    if len(parameters) < 2 and options.asciicmd is None:
+    if len(parameters) < 2 and (options.asciicmd is None and options.unicodecmd is None):
         if options.os == 'windows':
             parameters.append('%s%s%s' % (path.splitext(parameters[0])[0], path.extsep, 'exe'))
         else:
@@ -206,6 +218,14 @@ def main(argv):
             print "Reading string shellcode from file %s" % parameters[0]
             shellcode = open(parameters[0], 'rb').read()
             shellcode = shellcode.decode("string-escape")
+        elif options.unicodecmd is True:
+            print "Treating first parameter as %u encoded shellcode"
+            shellcode = parameters[0]
+            shellcode = unicodeToRaw(shellcode)
+        elif options.unicodefile is True:
+            print "Reading string shellcode from file %s" % parameters[0]
+            shellcode = open(parameters[0], 'rb').read()
+            shellcode = unicodeToRaw(shellcode)
         else:
             print "Reading raw shellcode from file %s" % parameters[0]
             shellcode = open(parameters[0], 'rb').read()
