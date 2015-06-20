@@ -171,13 +171,13 @@ def main(argv):
     parser.add_option("-o", "--os", metavar="OS",
                       help="target operating system [default: windows]")
     parser.add_option("-c", "--asciicmd", action="store_true", dest="asciicmd",
-                  help="enable ascii entry in input file")
+                      help="enable ascii entry in command line (e.g. -c '\x90\x90')")
     parser.add_option("-s", "--asciifile", action="store_true", dest="asciifile",
-                      help="enable ascii entry in command line")
+                      help="enable ascii entry in input file")
     parser.add_option("-d", "--unicodecmd", action="store_true", dest="unicodecmd",
-                  help="enable unicode entry in input file")
+                      help="enable unicode entry in command line (e.g. -d '%u9090')")
     parser.add_option("-u", "--unicodefile", action="store_true", dest="unicodefile",
-                      help="enable unicode entry in command line")
+                      help="enable unicode entry in input file")
     parser.set_defaults(arch='i386', os='windows')
 
     # Parse the command line arguments
